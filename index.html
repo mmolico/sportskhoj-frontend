@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <!--
     SPORTSKHOJ - India's Premier Sports News Aggregator
-    Versão: v0.1 Beta
+    Versão: v0.1.1 Beta
     Data: 2 Abril 2025
+    
+    CHANGELOG v0.1.1 Beta:
+    - Backend: Headers melhorados para ESPNCricinfo (fix 403)
     
     CHANGELOG v0.1 Beta:
     - Primeira versão funcional
@@ -323,7 +326,7 @@
         <div class="logo-container">
             <h1>
                 🏏 SPORTSKHOJ
-                <span class="version-badge">v0.1 Beta</span>
+                <span class="version-badge">v0.1.1 Beta</span>
             </h1>
         </div>
         <div class="tagline">India's Premier Sports News Aggregator</div>
@@ -403,10 +406,10 @@
     <script>
         // Proxy configuration
         // PRODUCTION: Replace with your Render URL
-        let PROXY_URL = localStorage.getItem('proxyUrl') || 'https://sportskhoj-backend.onrender.com';
+        let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
         
-       
-     	PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
+        // For PRODUCTION, uncomment and edit:
+       PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
