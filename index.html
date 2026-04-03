@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<!--
+    SPORTSKHOJ - India's Premier Sports News Aggregator
+    Versão: v0.1 Beta
+    Data: 2 Abril 2025
+    
+    CHANGELOG v0.1 Beta:
+    - Primeira versão funcional
+    - ESPNCricinfo, BCCI, India TV News
+    - Navegação interna implementada
+    - Sistema de versionamento
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportsKhoj - India's Premier Sports News Aggregator</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="SportsKhoj - All major Indian sports news in one place. ESPNCricinfo, BCCI, India TV Sports live updates. Cricket, IPL, football, and more!">
+    <meta name="keywords" content="cricket news india, ipl live, bcci, espncricinfo, sports news india, cricket scores, indian premier league">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="SportsKhoj - India Sports News">
+    <meta property="og:description" content="All major Indian sports sites in one place">
+    <meta property="og:type" content="website">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f5f5f5;
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #FF9933 0%, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%, #138808 100%);
+            color: white;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #000;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .version-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #138808, #0a5c05);
+            color: white;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tagline {
+            font-size: 12px;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .refresh-all-btn {
+            padding: 8px 16px;
+            background-color: #FF9933;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .refresh-all-btn:hover {
+            background-color: #e88a2d;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 60px);
+            gap: 2px;
+            background-color: #ddd;
+        }
+
+        .iframe-wrapper {
+            flex: 1;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .iframe-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .site-name {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .refresh-btn {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .refresh-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        .iframe-scroll-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white;
+            display: block;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .status-loading {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .status-success {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .status-error {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .config-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 380px;
+            z-index: 1000;
+            border: 3px solid #FF9933;
+        }
+
+        .config-box h3 {
+            margin: 0 0 15px 0;
+            color: #FF9933;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-box input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .config-box input:focus {
+            border-color: #FF9933;
+            outline: none;
+        }
+
+        .config-box button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #FF9933, #138808);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .config-box button:hover {
+            transform: translateY(-2px);
+        }
+
+        .close-config {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #95a5a6;
+            font-weight: bold;
+        }
+
+        .close-config:hover {
+            color: #e74c3c;
+        }
+
+        .proxy-status {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .proxy-status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .proxy-status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 1024px) {
+            header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                flex-direction: column;
+                height: auto;
+                overflow-y: auto;
+            }
+
+            .iframe-wrapper {
+                height: 500px;
+                min-height: 500px;
+            }
+
+            .config-box {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <h1>
+                🏏 SPORTSKHOJ
+                <span class="version-badge">v0.1 Beta</span>
+            </h1>
+        </div>
+        <div class="tagline">India's Premier Sports News Aggregator</div>
+        <div class="controls">
+            <button class="refresh-all-btn" onclick="refreshAll()">
+                🔄 Refresh All
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="iframe-wrapper">
+            <div class="iframe-header">
+                <span class="site-name">ESPNCricinfo</span>
+                <button class="refresh-btn" onclick="refreshIframe('espncricinfo')">
+                    <span>🔄</span> Refresh
+                </button>
+            </div>
+            <div class="iframe-scroll-wrapper">
+                <div class="status-indicator status-loading" id="status-espncricinfo">Loading...</div>
+                <iframe 
+                    id="espncricinfo"
+                    title="ESPNCricinfo"
+                ></iframe>
+            </div>
+        </div>
+
+        <div class="iframe-wrapper">
+            <div class="iframe-header">
+                <span class="site-name">BCCI</span>
+                <button class="refresh-btn" onclick="refreshIframe('bcci')">
+                    <span>🔄</span> Refresh
+                </button>
+            </div>
+            <div class="iframe-scroll-wrapper">
+                <div class="status-indicator status-loading" id="status-bcci">Loading...</div>
+                <iframe 
+                    id="bcci"
+                    title="BCCI"
+                ></iframe>
+            </div>
+        </div>
+
+        <div class="iframe-wrapper">
+            <div class="iframe-header">
+                <span class="site-name">India TV Sports</span>
+                <button class="refresh-btn" onclick="refreshIframe('indiatvnews')">
+                    <span>🔄</span> Refresh
+                </button>
+            </div>
+            <div class="iframe-scroll-wrapper">
+                <div class="status-indicator status-loading" id="status-indiatvnews">Loading...</div>
+                <iframe 
+                    id="indiatvnews"
+                    title="India TV News Sports"
+                ></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Config Box -->
+    <div class="config-box" id="configBox">
+        <span class="close-config" onclick="document.getElementById('configBox').style.display='none'">×</span>
+        <h3>⚙️ Server Configuration</h3>
+        <input 
+            type="text" 
+            id="proxyUrl" 
+            placeholder="Proxy server URL (e.g., https://your-app.render.com)"
+            value="http://localhost:3000"
+        />
+        <button onclick="updateProxyUrl()">Save & Connect</button>
+        <div class="proxy-status disconnected" id="proxyStatus">
+            ⚠️ Configure proxy server URL above
+        </div>
+    </div>
+
+    <script>
+        // Proxy configuration
+        // PRODUCTION: Replace with your Render URL
+        let PROXY_URL = localStorage.getItem('proxyUrl') || 'https://sportskhoj-backend.onrender.com';
+        
+       
+     	PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
+
+        document.getElementById('proxyUrl').value = PROXY_URL;
+
+        function updateProxyUrl() {
+            const newUrl = document.getElementById('proxyUrl').value.trim();
+            if (!newUrl) {
+                alert('Please enter a valid URL');
+                return;
+            }
+            
+            PROXY_URL = newUrl.replace(/\/$/, '');
+            localStorage.setItem('proxyUrl', PROXY_URL);
+            
+            testProxyConnection();
+            loadAllIframes();
+        }
+
+        async function testProxyConnection() {
+            const statusEl = document.getElementById('proxyStatus');
+            statusEl.className = 'proxy-status disconnected';
+            statusEl.textContent = '🔄 Testing connection...';
+            
+            try {
+                const response = await fetch(PROXY_URL, { method: 'GET' });
+                if (response.ok) {
+                    statusEl.className = 'proxy-status connected';
+                    statusEl.textContent = '✅ Connected successfully!';
+                    setTimeout(() => {
+                        document.getElementById('configBox').style.display = 'none';
+                    }, 2000);
+                } else {
+                    throw new Error('Server did not respond correctly');
+                }
+            } catch (error) {
+                statusEl.className = 'proxy-status disconnected';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function refreshIframe(site) {
+            loadIframe(site);
+            
+            const button = event.target.closest('.refresh-btn');
+            if (button) {
+                button.style.opacity = '0.5';
+                button.disabled = true;
+                setTimeout(() => {
+                    button.style.opacity = '1';
+                    button.disabled = false;
+                }, 1000);
+            }
+        }
+
+        function refreshAll() {
+            const sites = ['espncricinfo', 'bcci', 'indiatvnews'];
+            sites.forEach(site => loadIframe(site));
+            
+            const button = event.target;
+            button.style.opacity = '0.5';
+            button.disabled = true;
+            setTimeout(() => {
+                button.style.opacity = '1';
+                button.disabled = false;
+            }, 1500);
+        }
+
+        function loadIframe(site) {
+            const iframe = document.getElementById(site);
+            const status = document.getElementById('status-' + site);
+            
+            status.className = 'status-indicator status-loading';
+            status.textContent = 'Loading...';
+            
+            const proxyEndpoint = `${PROXY_URL}/proxy/${site}`;
+            iframe.src = proxyEndpoint;
+            
+            iframe.onload = () => {
+                status.className = 'status-indicator status-success';
+                status.textContent = '✓ Live';
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            };
+            
+            iframe.onerror = () => {
+                status.className = 'status-indicator status-error';
+                status.textContent = '✗ Error';
+            };
+        }
+
+        function loadAllIframes() {
+            const sites = ['espncricinfo', 'bcci', 'indiatvnews'];
+            sites.forEach(site => loadIframe(site));
+        }
+
+        // Load on start
+        window.addEventListener('load', () => {
+            testProxyConnection();
+            loadAllIframes();
+        });
+    </script>
+</body>
+</html>
