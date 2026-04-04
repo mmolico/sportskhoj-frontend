@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <!--
     SPORTSKHOJ - India's Premier Sports News Aggregator
-    Versão: v0.1.1 Beta
+    Versão: v0.2 Beta
     Data: 2 Abril 2025
     
+    CHANGELOG v0.2 Beta:
+    - NOVO: Cricbuzz substitui ESPNCricinfo
+    - India's #1 cricket site - sem problemas!
+    - Recomenda UptimeRobot para idle time
+    
     CHANGELOG v0.1.1 Beta:
-    - Backend: Headers melhorados para ESPNCricinfo (fix 403)
+    - Backend: Headers melhorados
     
     CHANGELOG v0.1 Beta:
     - Primeira versão funcional
-    - ESPNCricinfo, BCCI, India TV News
-    - Navegação interna implementada
-    - Sistema de versionamento
 -->
 <html lang="en">
 <head>
@@ -21,7 +23,7 @@
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="SportsKhoj - All major Indian sports news in one place. ESPNCricinfo, BCCI, India TV Sports live updates. Cricket, IPL, football, and more!">
-    <meta name="keywords" content="cricket news india, ipl live, bcci, espncricinfo, sports news india, cricket scores, indian premier league">
+    <meta name="keywords" content="cricket news india, ipl live, bcci, cricbuzz, sports news india, cricket scores, indian premier league">
     
     <!-- Open Graph -->
     <meta property="og:title" content="SportsKhoj - India Sports News">
@@ -326,7 +328,7 @@
         <div class="logo-container">
             <h1>
                 🏏 SPORTSKHOJ
-                <span class="version-badge">v0.1.1 Beta</span>
+                <span class="version-badge">v0.2 Beta</span>
             </h1>
         </div>
         <div class="tagline">India's Premier Sports News Aggregator</div>
@@ -340,16 +342,16 @@
     <div class="container">
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">ESPNCricinfo</span>
-                <button class="refresh-btn" onclick="refreshIframe('espncricinfo')">
+                <span class="site-name">Cricbuzz</span>
+                <button class="refresh-btn" onclick="refreshIframe('cricbuzz')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-espncricinfo">Loading...</div>
+                <div class="status-indicator status-loading" id="status-cricbuzz">Loading...</div>
                 <iframe 
-                    id="espncricinfo"
-                    title="ESPNCricinfo"
+                    id="cricbuzz"
+                    title="Cricbuzz"
                 ></iframe>
             </div>
         </div>
@@ -408,8 +410,7 @@
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
         
-        // For PRODUCTION, uncomment and edit:
-       PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
+       	PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -464,7 +465,7 @@
         }
 
         function refreshAll() {
-            const sites = ['espncricinfo', 'bcci', 'indiatvnews'];
+            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
             
             const button = event.target;
@@ -501,7 +502,7 @@
         }
 
         function loadAllIframes() {
-            const sites = ['espncricinfo', 'bcci', 'indiatvnews'];
+            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
         }
 
