@@ -5,8 +5,8 @@
     Data: 2 Abril 2025
     
     CHANGELOG v0.2 Beta:
-    - NOVO: Cricbuzz substitui ESPNCricinfo
-    - India's #1 cricket site - sem problemas!
+    - NOVO: Times of India Sports (3º site)
+    - Ordem: Times of India, BCCI, India TV
     - Recomenda UptimeRobot para idle time
     
     CHANGELOG v0.1.1 Beta:
@@ -23,7 +23,7 @@
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="SportsKhoj - All major Indian sports news in one place. ESPNCricinfo, BCCI, India TV Sports live updates. Cricket, IPL, football, and more!">
-    <meta name="keywords" content="cricket news india, ipl live, bcci, cricbuzz, sports news india, cricket scores, indian premier league">
+    <meta name="keywords" content="cricket news india, ipl live, bcci, times of india, sports news india, cricket scores, indian premier league">
     
     <!-- Open Graph -->
     <meta property="og:title" content="SportsKhoj - India Sports News">
@@ -342,16 +342,16 @@
     <div class="container">
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">Cricbuzz</span>
-                <button class="refresh-btn" onclick="refreshIframe('cricbuzz')">
+                <span class="site-name">Times of India Sports</span>
+                <button class="refresh-btn" onclick="refreshIframe('timesofindia')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-cricbuzz">Loading...</div>
+                <div class="status-indicator status-loading" id="status-timesofindia">Loading...</div>
                 <iframe 
-                    id="cricbuzz"
-                    title="Cricbuzz"
+                    id="timesofindia"
+                    title="Times of India Sports"
                 ></iframe>
             </div>
         </div>
@@ -410,7 +410,7 @@
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
         
-       	PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
+      	PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -465,7 +465,7 @@
         }
 
         function refreshAll() {
-            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
+            const sites = ['timesofindia', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
             
             const button = event.target;
@@ -502,7 +502,7 @@
         }
 
         function loadAllIframes() {
-            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
+            const sites = ['timesofindia', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
         }
 
