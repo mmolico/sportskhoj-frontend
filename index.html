@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <!--
     SPORTSKHOJ - India's Premier Sports News Aggregator
-    Versão: v0.3 Beta
+    Versão: v0.4 Beta
     Data: 2 Abril 2025
     
+    CHANGELOG v0.4 Beta:
+    - CRICBUZZ MOBILE (m.cricbuzz.com)
+    - Versão mobile funciona MELHOR em iframes
+    - Menos JavaScript = mais estável
+    
     CHANGELOG v0.3 Beta:
-    - CRICBUZZ com tratamento avançado
-    - Bypass completo de iframe restrictions
-    - Error handling global
-    
-    CHANGELOG v0.2 Beta:
-    - Tentativas anteriores
-    
-    CHANGELOG v0.1 Beta:
-    - Primeira versão funcional
+    - Cricbuzz desktop (quebrava)
 -->
 <html lang="en">
 <head>
@@ -328,7 +325,7 @@
         <div class="logo-container">
             <h1>
                 🏏 SPORTSKHOJ
-                <span class="version-badge">v0.3 Beta</span>
+                <span class="version-badge">v0.4 Beta</span>
             </h1>
         </div>
         <div class="tagline">India's Premier Sports News Aggregator</div>
@@ -409,7 +406,7 @@
         // Proxy configuration
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
-        
+
         PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
 
         document.getElementById('proxyUrl').value = PROXY_URL;
