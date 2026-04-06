@@ -5,10 +5,11 @@
     Data: 2 Abril 2025
     
     CHANGELOG v0.5 Beta:
-    - NDTV Sports substitui Cricbuzz (funciona!)
-    - Twitter banner Cricket (@cricbuzz, @ICC, @BCCI)
-    - Carousel tweets igual ao PEDIBOLA
-    - 3 sites + tweets reais funcionando!
+    - Layout 2x2: BCCI + India TV + YouTube + Live Scores
+    - Removido NDTV (403 forbidden)
+    - YouTube: ICC Cricket official channel
+    - Live Scores: Cricbuzz scores widget
+    - Twitter: Fix CORS com múltiplos proxies
 -->
 <html lang="en">
 <head>
@@ -450,22 +451,7 @@
     </header>
 
     <div class="container">
-        <div class="iframe-wrapper">
-            <div class="iframe-header">
-                <span class="site-name">NDTV Sports</span>
-                <button class="refresh-btn" onclick="refreshIframe('ndtv')">
-                    <span>🔄</span> Refresh
-                </button>
-            </div>
-            <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-ndtv">Loading...</div>
-                <iframe 
-                    id="ndtv"
-                    title="NDTV Sports"
-                ></iframe>
-            </div>
-        </div>
-
+        <!-- Top row: 2 News sites -->
         <div class="iframe-wrapper">
             <div class="iframe-header">
                 <span class="site-name">BCCI</span>
@@ -497,6 +483,35 @@
                 ></iframe>
             </div>
         </div>
+
+        <!-- Bottom row: YouTube + Live Scores -->
+        <div class="iframe-wrapper">
+            <div class="iframe-header">
+                <span class="site-name">🎥 ICC Cricket TV</span>
+            </div>
+            <div class="iframe-scroll-wrapper">
+                <iframe 
+                    style="width: 100%; height: 100%; border: 0;"
+                    src="https://www.youtube.com/embed/live_stream?channel=UCEk0cXq35kLKRj8rf5WYQWA"
+                    title="ICC Cricket Live"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                ></iframe>
+            </div>
+        </div>
+
+        <div class="iframe-wrapper">
+            <div class="iframe-header">
+                <span class="site-name">📊 Live Cricket Scores</span>
+            </div>
+            <div class="iframe-scroll-wrapper">
+                <iframe 
+                    style="width: 100%; height: 100%; border: 0;"
+                    src="https://www.cricbuzz.com/cricket-scorecard"
+                    title="Live Cricket Scores"
+                ></iframe>
+            </div>
+        </div>
     </div>
 
     <!-- Config Box -->
@@ -520,8 +535,8 @@
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
         
-        
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com';
+        // For PRODUCTION, uncomment and edit:
+        // PROXY_URL = 'https://sportskhoj-backend.onrender.com';  // ← EDIT HERE!
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -576,7 +591,7 @@
         }
 
         function refreshAll() {
-            const sites = ['ndtv', 'bcci', 'indiatvnews'];
+            const sites = ['bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
             
             const button = event.target;
@@ -613,7 +628,7 @@
         }
 
         function loadAllIframes() {
-            const sites = ['ndtv', 'bcci', 'indiatvnews'];
+            const sites = ['bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
         }
 
@@ -653,49 +668,64 @@
             for (const nitterUrl of nitterInstances) {
                 try {
                     const rssUrl = `${nitterUrl}/${account.handle}/rss`;
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
                     
-                    console.log(`Tentando buscar de ${nitterUrl}...`);
+                    // Tentar múltiplos proxies CORS
+                    const proxies = [
+                        `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
+                        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+                        `https://cors-anywhere.herokuapp.com/${rssUrl}`
+                    ];
                     
-                    const response = await fetch(proxyUrl);
-                    const xmlText = await response.text();
-                    
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                    
-                    const items = xmlDoc.getElementsByTagName('item');
-                    
-                    if (items && items.length > 0) {
-                        console.log(`✅ ${items.length} tweets de ${account.handle} encontrados`);
-                        
-                        const tweets = [];
-                        for (let i = 0; i < Math.min(3, items.length); i++) {
-                            const titleEl = items[i].getElementsByTagName('title')[0];
-                            const descEl = items[i].getElementsByTagName('description')[0];
+                    for (const proxyUrl of proxies) {
+                        try {
+                            console.log(`Tentando buscar de ${nitterUrl} via proxy...`);
                             
-                            let content = '';
-                            if (descEl && descEl.textContent) {
-                                content = descEl.textContent;
-                            } else if (titleEl && titleEl.textContent) {
-                                content = titleEl.textContent;
+                            const response = await fetch(proxyUrl);
+                            if (!response.ok) continue;
+                            
+                            const xmlText = await response.text();
+                            
+                            const parser = new DOMParser();
+                            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                            
+                            const items = xmlDoc.getElementsByTagName('item');
+                            
+                            if (items && items.length > 0) {
+                                console.log(`✅ ${items.length} tweets de ${account.handle} encontrados`);
+                                
+                                const tweets = [];
+                                for (let i = 0; i < Math.min(3, items.length); i++) {
+                                    const titleEl = items[i].getElementsByTagName('title')[0];
+                                    const descEl = items[i].getElementsByTagName('description')[0];
+                                    
+                                    let content = '';
+                                    if (descEl && descEl.textContent) {
+                                        content = descEl.textContent;
+                                    } else if (titleEl && titleEl.textContent) {
+                                        content = titleEl.textContent;
+                                    }
+                                    
+                                    content = content.replace(/<[^>]*>/g, '');
+                                    content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                                    content = content.substring(0, 280);
+                                    
+                                    if (content.trim()) {
+                                        tweets.push({
+                                            author: account.name,
+                                            handle: account.handle,
+                                            content: content,
+                                            verified: account.verified
+                                        });
+                                    }
+                                }
+                                
+                                if (tweets.length > 0) {
+                                    return tweets;
+                                }
                             }
-                            
-                            content = content.replace(/<[^>]*>/g, '');
-                            content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                            content = content.substring(0, 280);
-                            
-                            if (content.trim()) {
-                                tweets.push({
-                                    author: account.name,
-                                    handle: account.handle,
-                                    content: content,
-                                    verified: account.verified
-                                });
-                            }
-                        }
-                        
-                        if (tweets.length > 0) {
-                            return tweets;
+                        } catch (proxyError) {
+                            console.log(`Proxy falhou, tentando próximo...`);
+                            continue;
                         }
                     }
                 } catch (error) {
