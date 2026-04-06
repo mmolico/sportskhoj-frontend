@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <!--
     SPORTSKHOJ - India's Premier Sports News Aggregator
-    Versão: v0.4 Beta
+    Versão: v0.5 Beta
     Data: 2 Abril 2025
     
-    CHANGELOG v0.4 Beta:
-    - CRICBUZZ MOBILE (m.cricbuzz.com)
-    - Versão mobile funciona MELHOR em iframes
-    - Menos JavaScript = mais estável
-    
-    CHANGELOG v0.3 Beta:
-    - Cricbuzz desktop (quebrava)
+    CHANGELOG v0.5 Beta:
+    - NDTV Sports substitui Cricbuzz (funciona!)
+    - Twitter banner Cricket (@cricbuzz, @ICC, @BCCI)
+    - Carousel tweets igual ao PEDIBOLA
+    - 3 sites + tweets reais funcionando!
 -->
 <html lang="en">
 <head>
@@ -289,6 +287,97 @@
             color: #721c24;
         }
 
+        /* Twitter Banner Cricket - Carousel */
+        .twitter-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            height: 80px;
+            overflow: hidden;
+        }
+
+        .twitter-carousel {
+            display: flex;
+            animation: scroll-tweets 30s linear infinite;
+            height: 100%;
+            align-items: center;
+        }
+
+        @keyframes scroll-tweets {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .twitter-carousel:hover {
+            animation-play-state: paused;
+        }
+
+        .tweet-item {
+            min-width: 700px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            height: 100%;
+        }
+
+        .tweet-author {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+
+        .tweet-handle {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+        }
+
+        .tweet-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: #fff;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            white-space: normal;
+        }
+
+        .tweet-verified {
+            color: #fff;
+            margin-left: 5px;
+        }
+
+        .twitter-error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            gap: 10px;
+        }
+
+        .twitter-error-icon {
+            font-size: 20px;
+        }
+
+        /* Ajustar containers para banner */
+        .container {
+            height: calc(100vh - 140px) !important;
+        }
+
         @media (max-width: 1024px) {
             header {
                 flex-direction: column;
@@ -317,6 +406,30 @@
                 left: 10px;
                 max-width: none;
             }
+
+            /* Twitter banner responsive */
+            .twitter-banner {
+                height: 100px;
+            }
+
+            .tweet-item {
+                min-width: 350px;
+                padding: 10px 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .tweet-author {
+                font-size: 12px;
+                min-width: auto;
+            }
+
+            .tweet-content {
+                font-size: 11px;
+                line-height: 1.4;
+                -webkit-line-clamp: 4;
+            }
         }
     </style>
 </head>
@@ -325,7 +438,7 @@
         <div class="logo-container">
             <h1>
                 🏏 SPORTSKHOJ
-                <span class="version-badge">v0.4 Beta</span>
+                <span class="version-badge">v0.5 Beta</span>
             </h1>
         </div>
         <div class="tagline">India's Premier Sports News Aggregator</div>
@@ -339,16 +452,16 @@
     <div class="container">
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">Cricbuzz</span>
-                <button class="refresh-btn" onclick="refreshIframe('cricbuzz')">
+                <span class="site-name">NDTV Sports</span>
+                <button class="refresh-btn" onclick="refreshIframe('ndtv')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-cricbuzz">Loading...</div>
+                <div class="status-indicator status-loading" id="status-ndtv">Loading...</div>
                 <iframe 
-                    id="cricbuzz"
-                    title="Cricbuzz"
+                    id="ndtv"
+                    title="NDTV Sports"
                 ></iframe>
             </div>
         </div>
@@ -406,8 +519,9 @@
         // Proxy configuration
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
-
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
+        
+        // For PRODUCTION, uncomment and edit:
+        // PROXY_URL = 'https://sportskhoj-backend.onrender.com';  // ← EDIT HERE!
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -462,7 +576,7 @@
         }
 
         function refreshAll() {
-            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
+            const sites = ['ndtv', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
             
             const button = event.target;
@@ -499,7 +613,7 @@
         }
 
         function loadAllIframes() {
-            const sites = ['cricbuzz', 'bcci', 'indiatvnews'];
+            const sites = ['ndtv', 'bcci', 'indiatvnews'];
             sites.forEach(site => loadIframe(site));
         }
 
@@ -508,6 +622,162 @@
             testProxyConnection();
             loadAllIframes();
         });
+    </script>
+
+    <!-- Twitter Banner Cricket -->
+    <div class="twitter-banner">
+        <div class="twitter-carousel" id="tweetCarousel">
+            <!-- Tweets carregados via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Contas Twitter Cricket
+        const twitterAccounts = [
+            { name: 'Cricbuzz', handle: 'cricbuzz', verified: true },
+            { name: 'ICC', handle: 'ICC', verified: true },
+            { name: 'BCCI', handle: 'BCCI', verified: true }
+        ];
+
+        let allTweets = [];
+
+        // Instâncias Nitter
+        const nitterInstances = [
+            'https://nitter.poast.org',
+            'https://nitter.privacydev.net',
+            'https://nitter.net',
+            'https://nitter.1d4.us'
+        ];
+
+        async function fetchTweetsFromAccount(account) {
+            for (const nitterUrl of nitterInstances) {
+                try {
+                    const rssUrl = `${nitterUrl}/${account.handle}/rss`;
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
+                    
+                    console.log(`Tentando buscar de ${nitterUrl}...`);
+                    
+                    const response = await fetch(proxyUrl);
+                    const xmlText = await response.text();
+                    
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                    
+                    const items = xmlDoc.getElementsByTagName('item');
+                    
+                    if (items && items.length > 0) {
+                        console.log(`✅ ${items.length} tweets de ${account.handle} encontrados`);
+                        
+                        const tweets = [];
+                        for (let i = 0; i < Math.min(3, items.length); i++) {
+                            const titleEl = items[i].getElementsByTagName('title')[0];
+                            const descEl = items[i].getElementsByTagName('description')[0];
+                            
+                            let content = '';
+                            if (descEl && descEl.textContent) {
+                                content = descEl.textContent;
+                            } else if (titleEl && titleEl.textContent) {
+                                content = titleEl.textContent;
+                            }
+                            
+                            content = content.replace(/<[^>]*>/g, '');
+                            content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                            content = content.substring(0, 280);
+                            
+                            if (content.trim()) {
+                                tweets.push({
+                                    author: account.name,
+                                    handle: account.handle,
+                                    content: content,
+                                    verified: account.verified
+                                });
+                            }
+                        }
+                        
+                        if (tweets.length > 0) {
+                            return tweets;
+                        }
+                    }
+                } catch (error) {
+                    console.log(`❌ Erro com ${nitterUrl}:`, error.message);
+                    continue;
+                }
+            }
+            
+            console.log(`⚠️ Todas instâncias falharam para ${account.handle}`);
+            return [];
+        }
+
+        function createTweetElement(tweet) {
+            return `
+                <div class="tweet-item">
+                    <div class="tweet-author">
+                        ${tweet.author}
+                        ${tweet.verified ? '<span class="tweet-verified">✓</span>' : ''}
+                        <div class="tweet-handle">@${tweet.handle}</div>
+                    </div>
+                    <div class="tweet-content">${tweet.content}</div>
+                </div>
+            `;
+        }
+
+        async function loadRealTweets() {
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('🏏 SPORTSKHOJ: Buscando tweets Cricket...');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            allTweets = [];
+            
+            for (const account of twitterAccounts) {
+                console.log(`\n🐦 Buscando: ${account.name} (@${account.handle})`);
+                const tweets = await fetchTweetsFromAccount(account);
+                if (tweets.length > 0) {
+                    allTweets = allTweets.concat(tweets);
+                    console.log(`   ✅ ${tweets.length} tweets adicionados`);
+                } else {
+                    console.log(`   ❌ Nenhum tweet carregado`);
+                }
+            }
+            
+            console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            
+            if (allTweets.length > 0) {
+                console.log(`✅ SUCESSO: ${allTweets.length} tweets carregados TOTAL!`);
+                console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+                displayTweets();
+            } else {
+                console.log('❌ FALHA: Nenhum tweet carregado');
+                console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+                showNotConnected();
+            }
+        }
+
+        function displayTweets() {
+            const carousel = document.getElementById('tweetCarousel');
+            
+            let tweetsHTML = '';
+            allTweets.forEach(tweet => {
+                tweetsHTML += createTweetElement(tweet);
+            });
+            
+            carousel.innerHTML = tweetsHTML + tweetsHTML;
+        }
+
+        function showNotConnected() {
+            const carousel = document.getElementById('tweetCarousel');
+            carousel.innerHTML = `
+                <div class="twitter-error">
+                    <span class="twitter-error-icon">⚠️</span>
+                    NOT CONNECTED - Tweets unavailable
+                </div>
+            `;
+        }
+
+        // Carregar tweets
+        loadRealTweets();
+
+        // Atualizar a cada 15 minutos
+        setInterval(loadRealTweets, 15 * 60 * 1000);
     </script>
 </body>
 </html>
