@@ -5,11 +5,10 @@
     Data: 2 Abril 2025
     
     CHANGELOG v0.5 Beta:
-    - Layout 2x2: BCCI + India TV + YouTube + Live Scores
-    - Removido NDTV (403 forbidden)
-    - YouTube: ICC Cricket official channel
-    - Live Scores: Cricbuzz scores widget
-    - Twitter: Fix CORS com múltiplos proxies
+    - 3 sites: BCCI + India TV + The Hindu
+    - Tweets mais rápidos: 20s (vs 30s)
+    - Tweets alternados: 1 de cada conta (não 3 seguidos)
+    - Removido widgets que não funcionavam
 -->
 <html lang="en">
 <head>
@@ -305,7 +304,7 @@
 
         .twitter-carousel {
             display: flex;
-            animation: scroll-tweets 30s linear infinite;
+            animation: scroll-tweets 20s linear infinite;
             height: 100%;
             align-items: center;
         }
@@ -451,7 +450,7 @@
     </header>
 
     <div class="container">
-        <!-- Top row: 2 News sites -->
+        <!-- 2 sites em layout amplo -->
         <div class="iframe-wrapper">
             <div class="iframe-header">
                 <span class="site-name">BCCI</span>
@@ -484,31 +483,18 @@
             </div>
         </div>
 
-        <!-- Bottom row: YouTube + Live Scores -->
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">🎥 ICC Cricket TV</span>
+                <span class="site-name">The Hindu</span>
+                <button class="refresh-btn" onclick="refreshIframe('thehindu')">
+                    <span>🔄</span> Refresh
+                </button>
             </div>
             <div class="iframe-scroll-wrapper">
+                <div class="status-indicator status-loading" id="status-thehindu">Loading...</div>
                 <iframe 
-                    style="width: 100%; height: 100%; border: 0;"
-                    src="https://www.youtube.com/embed/live_stream?channel=UCEk0cXq35kLKRj8rf5WYQWA"
-                    title="ICC Cricket Live"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                ></iframe>
-            </div>
-        </div>
-
-        <div class="iframe-wrapper">
-            <div class="iframe-header">
-                <span class="site-name">📊 Live Cricket Scores</span>
-            </div>
-            <div class="iframe-scroll-wrapper">
-                <iframe 
-                    style="width: 100%; height: 100%; border: 0;"
-                    src="https://www.cricbuzz.com/cricket-scorecard"
-                    title="Live Cricket Scores"
+                    id="thehindu"
+                    title="The Hindu Cricket"
                 ></iframe>
             </div>
         </div>
@@ -534,8 +520,9 @@
         // Proxy configuration
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
-                
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
+        
+        
+        PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -590,7 +577,7 @@
         }
 
         function refreshAll() {
-            const sites = ['bcci', 'indiatvnews'];
+            const sites = ['bcci', 'indiatvnews', 'thehindu'];
             sites.forEach(site => loadIframe(site));
             
             const button = event.target;
@@ -627,7 +614,7 @@
         }
 
         function loadAllIframes() {
-            const sites = ['bcci', 'indiatvnews'];
+            const sites = ['bcci', 'indiatvnews', 'thehindu'];
             sites.forEach(site => loadIframe(site));
         }
 
@@ -755,16 +742,29 @@
             console.log('🏏 SPORTSKHOJ: Buscando tweets Cricket...');
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             
-            allTweets = [];
+            // Buscar tweets de todas as contas
+            const tweetsByAccount = [];
             
             for (const account of twitterAccounts) {
                 console.log(`\n🐦 Buscando: ${account.name} (@${account.handle})`);
                 const tweets = await fetchTweetsFromAccount(account);
                 if (tweets.length > 0) {
-                    allTweets = allTweets.concat(tweets);
+                    tweetsByAccount.push(tweets);
                     console.log(`   ✅ ${tweets.length} tweets adicionados`);
                 } else {
                     console.log(`   ❌ Nenhum tweet carregado`);
+                }
+            }
+            
+            // Intercalar tweets: 1 de cada conta alternadamente
+            allTweets = [];
+            const maxTweets = Math.max(...tweetsByAccount.map(t => t.length));
+            
+            for (let i = 0; i < maxTweets; i++) {
+                for (let accountTweets of tweetsByAccount) {
+                    if (accountTweets[i]) {
+                        allTweets.push(accountTweets[i]);
+                    }
                 }
             }
             
@@ -772,6 +772,7 @@
             
             if (allTweets.length > 0) {
                 console.log(`✅ SUCESSO: ${allTweets.length} tweets carregados TOTAL!`);
+                console.log('Ordem: alternados entre contas');
                 console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
                 displayTweets();
             } else {
