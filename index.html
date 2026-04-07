@@ -6,9 +6,9 @@
     
     CHANGELOG v0.5 Beta:
     - 3 sites: BCCI + India TV + The Hindu
-    - Tweets mais rápidos: 20s (vs 30s)
-    - Tweets alternados: 1 de cada conta (não 3 seguidos)
-    - Removido widgets que não funcionavam
+    - Twitter: CÓDIGO PEDIBOLA copiado (funciona!)
+    - AllOrigins + Nitter = tweets reais
+    - 20s carousel + alternados
 -->
 <html lang="en">
 <head>
@@ -521,8 +521,8 @@
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
         
-        
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
+        // For PRODUCTION, uncomment and edit:
+        // PROXY_URL = 'https://sportskhoj-backend.onrender.com';  // ← EDIT HERE!
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -642,7 +642,7 @@
 
         let allTweets = [];
 
-        // Instâncias Nitter
+        // Instâncias Nitter (igual PEDIBOLA)
         const nitterInstances = [
             'https://nitter.poast.org',
             'https://nitter.privacydev.net',
@@ -651,67 +651,57 @@
         ];
 
         async function fetchTweetsFromAccount(account) {
+            // SOLUÇÃO PEDIBOLA - FUNCIONA!
             for (const nitterUrl of nitterInstances) {
                 try {
                     const rssUrl = `${nitterUrl}/${account.handle}/rss`;
                     
-                    // Tentar múltiplos proxies CORS
-                    const proxies = [
-                        `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
-                        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
-                        `https://cors-anywhere.herokuapp.com/${rssUrl}`
-                    ];
+                    // Usar AllOrigins como proxy CORS
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
                     
-                    for (const proxyUrl of proxies) {
-                        try {
-                            console.log(`Tentando buscar de ${nitterUrl} via proxy...`);
+                    console.log(`Tentando buscar de ${nitterUrl}...`);
+                    
+                    const response = await fetch(proxyUrl);
+                    const xmlText = await response.text();
+                    
+                    // Parse XML simples
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                    
+                    const items = xmlDoc.getElementsByTagName('item');
+                    
+                    if (items && items.length > 0) {
+                        console.log(`✅ ${items.length} tweets de ${account.handle} encontrados`);
+                        
+                        const tweets = [];
+                        for (let i = 0; i < Math.min(3, items.length); i++) {
+                            const titleEl = items[i].getElementsByTagName('title')[0];
+                            const descEl = items[i].getElementsByTagName('description')[0];
                             
-                            const response = await fetch(proxyUrl);
-                            if (!response.ok) continue;
-                            
-                            const xmlText = await response.text();
-                            
-                            const parser = new DOMParser();
-                            const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                            
-                            const items = xmlDoc.getElementsByTagName('item');
-                            
-                            if (items && items.length > 0) {
-                                console.log(`✅ ${items.length} tweets de ${account.handle} encontrados`);
-                                
-                                const tweets = [];
-                                for (let i = 0; i < Math.min(3, items.length); i++) {
-                                    const titleEl = items[i].getElementsByTagName('title')[0];
-                                    const descEl = items[i].getElementsByTagName('description')[0];
-                                    
-                                    let content = '';
-                                    if (descEl && descEl.textContent) {
-                                        content = descEl.textContent;
-                                    } else if (titleEl && titleEl.textContent) {
-                                        content = titleEl.textContent;
-                                    }
-                                    
-                                    content = content.replace(/<[^>]*>/g, '');
-                                    content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-                                    content = content.substring(0, 280);
-                                    
-                                    if (content.trim()) {
-                                        tweets.push({
-                                            author: account.name,
-                                            handle: account.handle,
-                                            content: content,
-                                            verified: account.verified
-                                        });
-                                    }
-                                }
-                                
-                                if (tweets.length > 0) {
-                                    return tweets;
-                                }
+                            let content = '';
+                            if (descEl && descEl.textContent) {
+                                content = descEl.textContent;
+                            } else if (titleEl && titleEl.textContent) {
+                                content = titleEl.textContent;
                             }
-                        } catch (proxyError) {
-                            console.log(`Proxy falhou, tentando próximo...`);
-                            continue;
+                            
+                            // Limpar HTML
+                            content = content.replace(/<[^>]*>/g, '');
+                            content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+                            content = content.substring(0, 280);
+                            
+                            if (content.trim()) {
+                                tweets.push({
+                                    author: account.name,
+                                    handle: account.handle,
+                                    content: content,
+                                    verified: account.verified
+                                });
+                            }
+                        }
+                        
+                        if (tweets.length > 0) {
+                            return tweets;
                         }
                     }
                 } catch (error) {
