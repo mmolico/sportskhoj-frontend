@@ -1,30 +1,16 @@
 <!DOCTYPE html>
 <!--
-    SPORTSKHOJ - India's Premier Sports News Aggregator
-    Versão: v0.5 Beta
-    Data: 2 Abril 2025
-    
-    CHANGELOG v0.5 Beta:
-    - The Hindu: links pelo proxy (funciona!)
-    - Twitter: ChennaiIPL em vez de ESPNcricinfo
-    - 5 contas: ICC, IPL, ChennaiIPL, BCCI, Cricbuzz
-    - Taxa sucesso: 3-4/5 contas (60-80%)
+    SPORTSKHOJ - VERSÃO TESTE v0.6
+    Testando 3 sites novos:
+    - Cricwaves (iframe-friendly)
+    - Sportskeeda (100M+ users)
+    - CREX (site moderno)
 -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportsKhoj - India's Premier Sports News Aggregator</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="SportsKhoj - All major Indian sports news in one place. ESPNCricinfo, BCCI, India TV Sports live updates. Cricket, IPL, football, and more!">
-    <meta name="keywords" content="cricket news india, ipl live, bcci, times of india, sports news india, cricket scores, indian premier league">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="SportsKhoj - India Sports News">
-    <meta property="og:description" content="All major Indian sports sites in one place">
-    <meta property="og:type" content="website">
-    
+    <title>🏏 SPORTSKHOJ TEST - Cricket News India</title>
     <style>
         * {
             margin: 0;
@@ -33,94 +19,59 @@
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
             overflow: hidden;
         }
 
+        /* Header */
         header {
-            background: linear-gradient(135deg, #FF9933 0%, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%, #138808 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            padding: 15px 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 100;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #000;
-            text-shadow: 2px 2px 4px rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .version-badge {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            background: linear-gradient(135deg, #138808, #0a5c05);
-            color: white;
-            border-radius: 12px;
-            letter-spacing: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .tagline {
-            font-size: 12px;
-            color: #555;
-            font-weight: 400;
-        }
-
-        .controls {
-            display: flex;
+            justify-content: center;
             gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
         }
 
-        .refresh-all-btn {
-            padding: 8px 16px;
-            background-color: #FF9933;
-            color: white;
-            border: none;
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .badge {
+            background: #f39c12;
+            padding: 5px 15px;
             border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 11px;
+            font-weight: bold;
         }
 
-        .refresh-all-btn:hover {
-            background-color: #e88a2d;
-            transform: translateY(-2px);
-        }
-
+        /* Container */
         .container {
-            display: flex;
-            height: calc(100vh - 60px);
-            gap: 2px;
-            background-color: #ddd;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 15px;
+            height: calc(100vh - 120px);
         }
 
+        /* Iframe Wrapper */
         .iframe-wrapper {
-            flex: 1;
-            background-color: white;
-            position: relative;
+            background: white;
+            border-radius: 12px;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
         }
@@ -128,37 +79,30 @@
         .iframe-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 8px 15px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
-            font-weight: 600;
-            flex-shrink: 0;
         }
 
         .site-name {
-            flex: 1;
-            text-align: center;
-            font-size: 13px;
+            font-weight: 700;
+            font-size: 15px;
         }
 
         .refresh-btn {
-            background-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.2);
+            border: none;
             color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 5px 10px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 11px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            font-size: 13px;
+            transition: background 0.3s;
         }
 
         .refresh-btn:hover {
-            background-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.3);
         }
 
         .iframe-scroll-wrapper {
@@ -171,123 +115,39 @@
             width: 100%;
             height: 100%;
             border: none;
-            background-color: white;
             display: block;
         }
 
+        /* Status Indicator */
         .status-indicator {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 11px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 30px;
+            border-radius: 10px;
             font-weight: 600;
             z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
         }
 
         .status-loading {
-            background-color: #f39c12;
-            color: white;
-        }
-
-        .status-success {
-            background-color: #27ae60;
+            background: rgba(103, 126, 234, 0.95);
             color: white;
         }
 
         .status-error {
-            background-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.95);
             color: white;
         }
 
-        .config-box {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            max-width: 380px;
-            z-index: 1000;
-            border: 3px solid #FF9933;
-        }
-
-        .config-box h3 {
-            margin: 0 0 15px 0;
-            color: #FF9933;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .config-box input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .config-box input:focus {
-            border-color: #FF9933;
-            outline: none;
-        }
-
-        .config-box button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #FF9933, #138808);
+        .status-success {
+            background: rgba(39, 174, 96, 0.95);
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.3s;
+            display: none;
         }
 
-        .config-box button:hover {
-            transform: translateY(-2px);
-        }
-
-        .close-config {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            cursor: pointer;
-            font-size: 24px;
-            color: #95a5a6;
-            font-weight: bold;
-        }
-
-        .close-config:hover {
-            color: #e74c3c;
-        }
-
-        .proxy-status {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .proxy-status.connected {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .proxy-status.disconnected {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Twitter Banner Cricket - Carousel */
+        /* Twitter Banner */
         .twitter-banner {
             position: fixed;
             bottom: 0;
@@ -306,16 +166,15 @@
             display: flex;
             animation: scroll-tweets 13s linear infinite;
             height: 100%;
-            align-items: center;
+        }
+
+        .twitter-carousel:hover {
+            animation-play-state: paused;
         }
 
         @keyframes scroll-tweets {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
-        }
-
-        .twitter-carousel:hover {
-            animation-play-state: paused;
         }
 
         .tweet-item {
@@ -336,6 +195,14 @@
             flex-shrink: 0;
         }
 
+        .tweet-verified {
+            color: #1DA1F2;
+            background: white;
+            border-radius: 50%;
+            padding: 2px 4px;
+            font-size: 10px;
+        }
+
         .tweet-handle {
             color: rgba(255,255,255,0.8);
             font-size: 11px;
@@ -353,58 +220,16 @@
             white-space: normal;
         }
 
-        .tweet-verified {
-            color: #fff;
-            margin-left: 5px;
-        }
-
-        .twitter-error {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.9);
-            gap: 10px;
-        }
-
-        .twitter-error-icon {
-            font-size: 20px;
-        }
-
         /* Ajustar containers para banner */
         .container {
             height: calc(100vh - 120px) !important;
         }
 
-        @media (max-width: 1024px) {
-            header {
-                flex-direction: column;
-                gap: 10px;
-                padding: 12px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
+        /* Responsive */
+        @media (max-width: 1200px) {
             .container {
-                flex-direction: column;
-                height: auto;
-                overflow-y: auto;
-            }
-
-            .iframe-wrapper {
-                height: 500px;
-                min-height: 500px;
-            }
-
-            .config-box {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
+                grid-template-columns: 1fr;
+                gap: 10px;
             }
 
             /* Twitter banner responsive */
@@ -436,195 +261,62 @@
 <body>
     <header>
         <div class="logo-container">
-            <h1>
-                🏏 SPORTSKHOJ
-                <span class="version-badge">v0.5 Beta</span>
-            </h1>
-        </div>
-        <div class="tagline">India's Premier Sports News Aggregator</div>
-        <div class="controls">
-            <button class="refresh-all-btn" onclick="refreshAll()">
-                🔄 Refresh All
-            </button>
+            <div class="logo">🏏 SPORTSKHOJ</div>
+            <div class="badge">TEST v0.6</div>
         </div>
     </header>
 
     <div class="container">
-        <!-- 2 sites em layout amplo -->
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">BCCI</span>
-                <button class="refresh-btn" onclick="refreshIframe('bcci')">
+                <span class="site-name">📊 Cricwaves</span>
+                <button class="refresh-btn" onclick="refreshIframe('cricwaves')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-bcci">Loading...</div>
+                <div class="status-indicator status-loading" id="status-cricwaves">Loading...</div>
                 <iframe 
-                    id="bcci"
-                    title="BCCI"
+                    id="cricwaves"
+                    title="Cricwaves"
                 ></iframe>
             </div>
         </div>
 
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">India TV Sports</span>
-                <button class="refresh-btn" onclick="refreshIframe('indiatvnews')">
+                <span class="site-name">⭐ Sportskeeda</span>
+                <button class="refresh-btn" onclick="refreshIframe('sportskeeda')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-indiatvnews">Loading...</div>
+                <div class="status-indicator status-loading" id="status-sportskeeda">Loading...</div>
                 <iframe 
-                    id="indiatvnews"
-                    title="India TV News Sports"
+                    id="sportskeeda"
+                    title="Sportskeeda Cricket"
                 ></iframe>
             </div>
         </div>
 
         <div class="iframe-wrapper">
             <div class="iframe-header">
-                <span class="site-name">The Hindu</span>
-                <button class="refresh-btn" onclick="refreshIframe('thehindu')">
+                <span class="site-name">🔥 CREX</span>
+                <button class="refresh-btn" onclick="refreshIframe('crex')">
                     <span>🔄</span> Refresh
                 </button>
             </div>
             <div class="iframe-scroll-wrapper">
-                <div class="status-indicator status-loading" id="status-thehindu">Loading...</div>
+                <div class="status-indicator status-loading" id="status-crex">Loading...</div>
                 <iframe 
-                    id="thehindu"
-                    title="The Hindu Cricket"
+                    id="crex"
+                    title="CREX Cricket"
                 ></iframe>
             </div>
         </div>
     </div>
 
-    <!-- Config Box -->
-    <div class="config-box" id="configBox">
-        <span class="close-config" onclick="document.getElementById('configBox').style.display='none'">×</span>
-        <h3>⚙️ Server Configuration</h3>
-        <input 
-            type="text" 
-            id="proxyUrl" 
-            placeholder="Proxy server URL (e.g., https://your-app.render.com)"
-            value="http://localhost:3000"
-        />
-        <button onclick="updateProxyUrl()">Save & Connect</button>
-        <div class="proxy-status disconnected" id="proxyStatus">
-            ⚠️ Configure proxy server URL above
-        </div>
-    </div>
-
-    <script>
-        // Proxy configuration
-        // PRODUCTION: Replace with your Render URL
-        let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
-        
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
-
-        document.getElementById('proxyUrl').value = PROXY_URL;
-
-        function updateProxyUrl() {
-            const newUrl = document.getElementById('proxyUrl').value.trim();
-            if (!newUrl) {
-                alert('Please enter a valid URL');
-                return;
-            }
-            
-            PROXY_URL = newUrl.replace(/\/$/, '');
-            localStorage.setItem('proxyUrl', PROXY_URL);
-            
-            testProxyConnection();
-            loadAllIframes();
-        }
-
-        async function testProxyConnection() {
-            const statusEl = document.getElementById('proxyStatus');
-            statusEl.className = 'proxy-status disconnected';
-            statusEl.textContent = '🔄 Testing connection...';
-            
-            try {
-                const response = await fetch(PROXY_URL, { method: 'GET' });
-                if (response.ok) {
-                    statusEl.className = 'proxy-status connected';
-                    statusEl.textContent = '✅ Connected successfully!';
-                    setTimeout(() => {
-                        document.getElementById('configBox').style.display = 'none';
-                    }, 2000);
-                } else {
-                    throw new Error('Server did not respond correctly');
-                }
-            } catch (error) {
-                statusEl.className = 'proxy-status disconnected';
-                statusEl.textContent = `❌ Error: ${error.message}`;
-            }
-        }
-
-        function refreshIframe(site) {
-            loadIframe(site);
-            
-            const button = event.target.closest('.refresh-btn');
-            if (button) {
-                button.style.opacity = '0.5';
-                button.disabled = true;
-                setTimeout(() => {
-                    button.style.opacity = '1';
-                    button.disabled = false;
-                }, 1000);
-            }
-        }
-
-        function refreshAll() {
-            const sites = ['bcci', 'indiatvnews', 'thehindu'];
-            sites.forEach(site => loadIframe(site));
-            
-            const button = event.target;
-            button.style.opacity = '0.5';
-            button.disabled = true;
-            setTimeout(() => {
-                button.style.opacity = '1';
-                button.disabled = false;
-            }, 1500);
-        }
-
-        function loadIframe(site) {
-            const iframe = document.getElementById(site);
-            const status = document.getElementById('status-' + site);
-            
-            status.className = 'status-indicator status-loading';
-            status.textContent = 'Loading...';
-            
-            const proxyEndpoint = `${PROXY_URL}/proxy/${site}`;
-            iframe.src = proxyEndpoint;
-            
-            iframe.onload = () => {
-                status.className = 'status-indicator status-success';
-                status.textContent = '✓ Live';
-                setTimeout(() => {
-                    status.style.display = 'none';
-                }, 3000);
-            };
-            
-            iframe.onerror = () => {
-                status.className = 'status-indicator status-error';
-                status.textContent = '✗ Error';
-            };
-        }
-
-        function loadAllIframes() {
-            const sites = ['bcci', 'indiatvnews', 'thehindu'];
-            sites.forEach(site => loadIframe(site));
-        }
-
-        // Load on start
-        window.addEventListener('load', () => {
-            testProxyConnection();
-            loadAllIframes();
-        });
-    </script>
-
-    <!-- Twitter Banner Cricket -->
+    <!-- Twitter Banner -->
     <div class="twitter-banner">
         <div class="twitter-carousel" id="tweetCarousel">
             <!-- Tweets carregados via JavaScript -->
@@ -632,7 +324,14 @@
     </div>
 
     <script>
-        // Contas Twitter Cricket (5 mais populares Índia)
+        // ═══════════════════════════════════════════════════════════
+        // CONFIGURAÇÃO - EDITAR AQUI O TEU BACKEND URL!
+        // ═══════════════════════════════════════════════════════════
+        const PROXY_URL = 'https://sportskhoj-backend.onrender.com';  // ← EDITA AQUI!
+        
+        // ═══════════════════════════════════════════════════════════
+        // TWITTER
+        // ═══════════════════════════════════════════════════════════
         const twitterAccounts = [
             { name: 'ICC', handle: 'ICC', verified: true },
             { name: 'IPL', handle: 'IPL', verified: true },
@@ -643,7 +342,6 @@
 
         let allTweets = [];
 
-        // Instâncias Nitter (igual PEDIBOLA)
         const nitterInstances = [
             'https://nitter.poast.org',
             'https://nitter.privacydev.net',
@@ -651,13 +349,23 @@
             'https://nitter.1d4.us'
         ];
 
+        function createTweetElement(tweet) {
+            return `
+                <div class="tweet-item">
+                    <div class="tweet-author">
+                        ${tweet.author}
+                        ${tweet.verified ? '<span class="tweet-verified">✓</span>' : ''}
+                        <div class="tweet-handle">@${tweet.handle}</div>
+                    </div>
+                    <div class="tweet-content">${tweet.content}</div>
+                </div>
+            `;
+        }
+
         async function fetchTweetsFromAccount(account) {
-            // SOLUÇÃO PEDIBOLA - FUNCIONA!
             for (const nitterUrl of nitterInstances) {
                 try {
                     const rssUrl = `${nitterUrl}/${account.handle}/rss`;
-                    
-                    // Usar AllOrigins como proxy CORS
                     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`;
                     
                     console.log(`Tentando buscar de ${nitterUrl}...`);
@@ -665,7 +373,6 @@
                     const response = await fetch(proxyUrl);
                     const xmlText = await response.text();
                     
-                    // Parse XML simples
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
                     
@@ -686,7 +393,6 @@
                                 content = titleEl.textContent;
                             }
                             
-                            // Limpar HTML
                             content = content.replace(/<[^>]*>/g, '');
                             content = content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                             content = content.substring(0, 280);
@@ -715,25 +421,11 @@
             return [];
         }
 
-        function createTweetElement(tweet) {
-            return `
-                <div class="tweet-item">
-                    <div class="tweet-author">
-                        ${tweet.author}
-                        ${tweet.verified ? '<span class="tweet-verified">✓</span>' : ''}
-                        <div class="tweet-handle">@${tweet.handle}</div>
-                    </div>
-                    <div class="tweet-content">${tweet.content}</div>
-                </div>
-            `;
-        }
-
         async function loadRealTweets() {
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             console.log('🏏 SPORTSKHOJ: Buscando tweets Cricket...');
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             
-            // Buscar tweets de todas as contas
             const tweetsByAccount = [];
             
             for (const account of twitterAccounts) {
@@ -747,7 +439,6 @@
                 }
             }
             
-            // Intercalar tweets: 1 de cada conta alternadamente
             allTweets = [];
             const maxTweets = Math.max(...tweetsByAccount.map(t => t.length));
             
@@ -787,18 +478,58 @@
         function showNotConnected() {
             const carousel = document.getElementById('tweetCarousel');
             carousel.innerHTML = `
-                <div class="twitter-error">
-                    <span class="twitter-error-icon">⚠️</span>
-                    NOT CONNECTED - Tweets unavailable
+                <div class="tweet-item" style="min-width: 100%; justify-content: center; color: rgba(255,255,255,0.8);">
+                    <div style="text-align: center;">
+                        ⚠️ Twitter NOT CONNECTED - Tweets unavailable
+                    </div>
                 </div>
             `;
         }
 
-        // Carregar tweets
-        loadRealTweets();
+        // ═══════════════════════════════════════════════════════════
+        // IFRAMES
+        // ═══════════════════════════════════════════════════════════
+        function loadIframe(site) {
+            const iframe = document.getElementById(site);
+            const status = document.getElementById(`status-${site}`);
+            
+            status.textContent = 'Loading...';
+            status.className = 'status-indicator status-loading';
+            
+            iframe.src = `${PROXY_URL}/proxy/${site}`;
+            
+            iframe.onload = () => {
+                status.style.display = 'none';
+                console.log(`✅ ${site} loaded`);
+            };
+            
+            iframe.onerror = () => {
+                status.textContent = '❌ Failed to load';
+                status.className = 'status-indicator status-error';
+                console.error(`❌ ${site} failed`);
+            };
+        }
 
-        // Atualizar a cada 15 minutos
-        setInterval(loadRealTweets, 15 * 60 * 1000);
+        function refreshIframe(site) {
+            loadIframe(site);
+        }
+
+        function loadAllIframes() {
+            const sites = ['cricwaves', 'sportskeeda', 'crex'];
+            sites.forEach(site => loadIframe(site));
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════
+        window.addEventListener('load', () => {
+            console.log('🏏 SPORTSKHOJ TEST v0.6 iniciado');
+            console.log(`Backend: ${PROXY_URL}`);
+            loadAllIframes();
+            loadRealTweets();
+            
+            setInterval(loadRealTweets, 15 * 60 * 1000);
+        });
     </script>
 </body>
 </html>
