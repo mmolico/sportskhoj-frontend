@@ -5,10 +5,10 @@
     Data: 2 Abril 2025
     
     CHANGELOG v0.5 Beta:
-    - The Hindu: navegação normal dentro do iframe
-    - Twitter: 5 contas (ICC, IPL, ESPN, BCCI, Cricbuzz)
-    - Banner compacto: 60px, 13s carousel
-    - Tweets alternados entre as 5 contas
+    - The Hindu: links pelo proxy (funciona!)
+    - Twitter: ChennaiIPL em vez de ESPNcricinfo
+    - 5 contas: ICC, IPL, ChennaiIPL, BCCI, Cricbuzz
+    - Taxa sucesso: 3-4/5 contas (60-80%)
 -->
 <html lang="en">
 <head>
@@ -520,8 +520,8 @@
         // Proxy configuration
         // PRODUCTION: Replace with your Render URL
         let PROXY_URL = localStorage.getItem('proxyUrl') || 'http://localhost:3000';
-             
-        PROXY_URL = 'https://sportskhoj-backend.onrender.com';  
+        
+        PROXY_URL = 'https://sportskhoj-backend.onrender.com'; 
 
         document.getElementById('proxyUrl').value = PROXY_URL;
 
@@ -636,7 +636,7 @@
         const twitterAccounts = [
             { name: 'ICC', handle: 'ICC', verified: true },
             { name: 'IPL', handle: 'IPL', verified: true },
-            { name: 'ESPN Cricinfo', handle: 'ESPNcricinfo', verified: true },
+            { name: 'Chennai Super Kings', handle: 'ChennaiIPL', verified: true },
             { name: 'BCCI', handle: 'BCCI', verified: true },
             { name: 'Cricbuzz', handle: 'cricbuzz', verified: true }
         ];
